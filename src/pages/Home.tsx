@@ -72,20 +72,33 @@ function Home() {
 
   useEffect(() => {
     const filteredData = listDoctors.reduce((acc: Doctor[], curr: Doctor) => {
-      const matchedName = curr.name
+      const {
+        name: currName,
+        specialization: currSpecialization,
+        hospital: currHospital,
+      } = curr;
+
+      const matchedName = currName
         .toLowerCase()
         .includes(filterName.toLowerCase());
+
       const matchedSpecialization = filterSpecialization.some(
-        (element: Specialization) => {
-          return element.id === curr.specialization.id;
+        (specialization: Specialization) => {
+          return specialization.id === currSpecialization.id;
         }
       );
-      const matchedHospital = filterHospital.some((element: Hospital) => {
-        return element.id === curr.hospital[0].id;
+
+      const matchedHospital = filterHospital.some((hospital: Hospital) => {
+        const isMatch = currHospital.some((doctorHospital: Hospital) => {
+          return hospital.id === doctorHospital.id;
+        });
+        return isMatch;
       });
+
       if (matchedName && matchedSpecialization && matchedHospital) {
         return [...acc, curr];
       }
+
       return [...acc];
     }, []);
 
